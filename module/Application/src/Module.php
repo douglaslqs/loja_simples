@@ -10,7 +10,9 @@ namespace Application;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\Entity\ProdutoEntity;
-use Application\Model\ProdutoTAble;
+use Application\Model\Entity\CategoriaEntity;
+use Application\Model\ProdutoTable;
+use Application\Model\CategoriaTable;
 
 class Module
 {
@@ -40,7 +42,7 @@ class Module
                     return new CategoriaTable($tableGateway);
                 },
                 'CategoriaTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('store-adapter');
+                    $dbAdapter = $sm->get('loja-adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new CategoriaEntity());
                     return new TableGateway('categoria', $dbAdapter, null, $resultSetPrototype);
@@ -50,7 +52,7 @@ class Module
                     return new ProdutoCategoriaTable($tableGateway);
                 },
                 'ProdutoCategoriaTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('store-adapter');
+                    $dbAdapter = $sm->get('loja-adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new ProdutoCategoriaEntity());
                     return new TableGateway('produto_categoria', $dbAdapter, null, $resultSetPrototype);

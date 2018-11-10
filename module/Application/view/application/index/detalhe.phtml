@@ -1,0 +1,39 @@
+
+<div class="row">
+    <div class="col-md-6">
+        <?php
+        if (!is_array($this->produtos) || !isset($this->produtos['id'])) :
+            echo "<h2>Produto não encontrado :(</h2></div></div>";
+         else :
+        ?>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><?php echo $this->produtos['nome'];?></h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-5">
+                            <img class="img-thumbnai img-responsive" src="/img/produto/<?php echo $this->produtos['imagem'] ?>">
+                        </div>
+                        <div class="col-md-7">
+                            <p>
+                                <?php echo $this->produtos['descricao']?>
+                            </p>
+                            <p><h4><b>
+                                <?php echo 'R$ '.number_format($this->produtos['preco'],2,',','.');?>
+                            </h4></b></p>
+
+                        </div>
+
+                        <p><a class="btn btn-success pull-right" href="/detalhe?id=<?php echo $this->produtos['id']?>">Adicionar ao carrinho &raquo;</a></p>
+                    </div>
+                </div>
+
+    </div>
+    <div class="jumbotron col-md-6">
+        <h3><span class="zf-green"><?php echo $this->produtos['nome']?></span></h3>
+        <p>
+            <?php echo $this->produtos['descricao'] ?>
+        </p>
+    </div>
+</div>
+<?php endif; ?>
