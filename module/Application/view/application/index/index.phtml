@@ -8,14 +8,14 @@
 <div class="row">
     <div class="col-md-6">
     <p><b><h4>Pesquisar Produtos</h4><b></p>
-        <form class="form form-group" action="/application/busca">
+        <form class="form form-group" method="post" action="/application/busca">
             <label for="pesq-nome">Nome</label>
             <input type="text" class="form-control" name="pesq-nome" id="pesq-nome" placeholder="Ex. Mesa"/>
-            <label for="pesq-categiria">Categoria</label>
+            <label for="pesq-categoria">Categoria</label>
             <?php
             if (is_array($this->categorias)) :
             ?>
-            <select name="pesq-categiria" class="form-control" id="pesq-categoria">
+            <select name="pesq-categoria" class="form-control" id="pesq-categoria">
                 <option value="">Selecione uma opção</option>
             <?php foreach ($this->categorias as $key => $value):?>
                 <option value="<?php echo $value['nome']?>"><?php echo $value['nome']?></option>
@@ -23,7 +23,7 @@
             <?php endforeach;?>
             </select>
             <?php endif;?>
-            <button type="submit" class="btn btn-success pull-right" style="margin-top: 15px;margin-bottom: 30px;">Pesquisar &raquo;</button>
+            <button type="submit" id="btn-submit" class="btn btn-success pull-right" style="margin-top: 15px;margin-bottom: 30px;">Pesquisar &raquo;</button>
         </form>
     </div>
 </div>
@@ -55,9 +55,22 @@
 
                     </div>
 
-                    <p><a class="btn btn-success pull-right" href="application/detalhe?id=<?php echo $value['id']?>">Comprar &raquo;</a></p>
+                    <p><a class="btn btn-success pull-right" href="/application/detalhe?id=<?php echo $value['id']?>">Comprar &raquo;</a></p>
                 </div>
             </div>
         </div>
     <?php endforeach;?>
 </div>
+<script type="text/javascript">
+    //VALIDACAO SIMPLES DOS CAMPOS DE BUSCA.
+    $("#btn-submit").click(function(event) {
+        /* Act on the event */
+        if($("#pesq-categoria").val() =="" && $("#pesq-nome").val() == "") {
+            alert("Selecione uma categoria ou digite um nome para efetuar a busca!");
+            return false;
+        } else {
+            $(".form").submit();
+        }
+    });
+
+</script>

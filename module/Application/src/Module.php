@@ -11,7 +11,9 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\Entity\ProdutoEntity;
 use Application\Model\Entity\CategoriaEntity;
+use Application\Model\Entity\ProdutoCategoriaEntity;
 use Application\Model\ProdutoTable;
+use Application\Model\ProdutoCategoriaTable;
 use Application\Model\CategoriaTable;
 
 class Module

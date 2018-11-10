@@ -10,6 +10,7 @@ namespace Application;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
+use Zend\Session\Storage\SessionArrayStorage;
 
 return [
     'router' => [
@@ -57,5 +58,18 @@ return [
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],
+    ],
+    'session_config' => [
+        // Session cookie will expire in 1 hour.
+        'cookie_lifetime' => 60*60*1,
+        // Session data will be stored on server maximum for 30 days.
+        'gc_maxlifetime'     => 60*60*24*30,
+    ],
+    // Session storage configuration.
+    'session_storage' => [
+        'type' => SessionArrayStorage::class
+    ],
+    'session_containers' => [
+        'ContainerNamespace'
     ],
 ];
