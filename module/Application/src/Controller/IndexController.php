@@ -17,6 +17,7 @@ class IndexController extends AbstractActionController
     private $objTableProdCateg;
     private $objTableProdCarac;
     private $objSession;
+    private $objLoginForm;
 
 	public function __construct($objTblProd, $objTblCateg, $objTblProdCateg, $objTblProdCarac, $objSession)
 	{
@@ -71,6 +72,13 @@ class IndexController extends AbstractActionController
         return $objView;
     }
 
+    public function carrinhoAction()
+    {
+        $arrProduto = $this->objSession->offsetGet('carrinho');
+        $arrParamsView = array('produtos'=>$arrProduto,'form'=>$this->objLoginForm);
+        return new ViewModel($arrParamsView);
+    }
+
     public function addCarrinhoAction()
     {
         $objRequest = $this->getRequest();
@@ -78,11 +86,66 @@ class IndexController extends AbstractActionController
         $intId = !empty($arrParams['id']) ? (int)$arrParams['id'] : 0;
         $arrProduto = $this->objTableProduto->fetchRow(array('id' => $intId));
 
-        var_dump($this->objSession);exit;
+        $arrSessCarrinho = $this->objSession->offsetGet('carrinho');
+        if (isset($arrSessCarrinho) && !empty($arrSessCarrinho)) {
+            if (isset($arrSessCarrinho[$arrProduto['id']]) && $arrSessCarrinho[$arrProduto['id']] > 1) {
+                $arrSessCarrinho[$arrProduto['id']]['quantidade'] += 1;
+            } else {
+                $arrSessCarrinho[$arrProduto['id']] = $arrProduto;
+                $arrSessCarrinho[$arrProduto['id']]['quantidade'] = 1;
+            }
+        } else {
+            $arrSessCarrinho[$arrProduto['id']] = $arrProduto;
+            $arrSessCarrinho[$arrProduto['id']]['quantidade'] = 1;
+        }
+        $this->objSession->offsetSet('carrinho', $arrSessCarrinho);
+       // var_dump($this->objSession->offsetGet('carrinho'));exit;
 
+        return $this->redirect()->toUrl('carrinho');
+    }
 
-        $arrParamsView = array('produtos'=>$arrProduto);
-        return new ViewModel($arrParamsView);
+    public function removeCarrinhoAction()
+    {
+        $objRequest = $this->getRequest();
+        $arrParams = $objRequest->getQuery()->toArray();
+        $intId = !empty($arrParams['id']) ? (int)$arrParams['id'] : 0;
+        $arrProduto = $this->objTableProduto->fetchRow(array('id' => $intId));
+
+        $arrSessCarrinho = $this->objSession->offsetGet('carrinho');
+        if (isset($arrSessCarrinho) && !empty($arrSessCarrinho)) {
+            if (isset($arrSessCarrinho[$arrProduto['id']])) {
+                if ($arrSessCarrinho[$arrProduto['id']]['quantidade'] <= 1) {
+                    unset($arrSessCarrinho[$arrProduto['id']]);
+                } else {
+                    $arrSessCarrinho[$arrProduto['id']]['quantidade'] -= 1;
+                }
+            }
+        }
+        $this->objSession->offsetSet('carrinho', $arrSessCarrinho);
+        return $this->redirect()->toUrl('carrinho');
+    }
+
+    public function cadastroAction()
+    {
+        $arrReturn['status'] = false;
+        $objRequest = $this->getRequest();
+        if ($objRequest->isPost()) {
+            $arrParams = $objRequest->getPost()->toArray();
+            $this->objLoginForm->setData($arrParams);
+            if ($this->objLoginForm->isValid()) {
+                //Salvar dados no banco
+            } else {
+                $arrReturn['message'] = 'Dados não validados! '.var_dump($this->objLoginForm->getInputFilter()->getMessages(), true);
+            }
+        } else {
+            $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
+        }
+        echo json_encode($arrReturn);exit;
+    }
+
+    public function setFormLogin($objForm)
+    {
+        $this->objLoginForm = $objForm;
     }
 
 }

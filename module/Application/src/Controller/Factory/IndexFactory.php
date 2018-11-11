@@ -11,6 +11,7 @@ use Application\Model\ProdutoTable;
 use Application\Model\CategoriaTable;
 use Application\Model\ProdutoCategoriaTable;
 use Application\Model\ProdutoCaracteristicaTable;
+use Application\Form\LoginForm;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
 
@@ -26,7 +27,7 @@ class IndexFactory implements FactoryInterface
 	    $objSessionManager = $container->get(SessionManager::class);
 	    $objSession = new Container('user', $objSessionManager);
 	    $controller = new $requestedName($tableProd, $tableCateg, $tableProdCateg, $tableProdCarac, $objSession);
-	    //$controller->setForm(new ProdutoForm());
+	    $controller->setFormLogin(new LoginForm());
 	    return $controller;
 	}
 }
