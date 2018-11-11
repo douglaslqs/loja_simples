@@ -10,6 +10,7 @@ use Interop\Container\ContainerInterface;
 use Application\Model\ProdutoTable;
 use Application\Model\CategoriaTable;
 use Application\Model\ProdutoCategoriaTable;
+use Application\Model\ProdutoCaracteristicaTable;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
 
@@ -21,9 +22,10 @@ class IndexFactory implements FactoryInterface
 	    $tableProd = $container->get(ProdutoTable::class);
 	    $tableCateg = $container->get(CategoriaTable::class);
 	    $tableProdCateg = $container->get(ProdutoCategoriaTable::class);
+	    $tableProdCarac = $container->get(ProdutoCaracteristicaTable::class);
 	    $objSessionManager = $container->get(SessionManager::class);
 	    $objSession = new Container('user', $objSessionManager);
-	    $controller = new $requestedName($tableProd, $tableCateg, $tableProdCateg, $objSession);
+	    $controller = new $requestedName($tableProd, $tableCateg, $tableProdCateg, $tableProdCarac, $objSession);
 	    //$controller->setForm(new ProdutoForm());
 	    return $controller;
 	}

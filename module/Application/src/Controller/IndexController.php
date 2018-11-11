@@ -15,11 +15,13 @@ class IndexController extends AbstractActionController
 	private $objTableProduto;
 	private $objTableCategoria;
     private $objTableProdCateg;
+    private $objTableProdCarac;
     private $objSession;
 
-	public function __construct($objTblProd, $objTblCateg, $objTblProdCateg, $objSession)
+	public function __construct($objTblProd, $objTblCateg, $objTblProdCateg, $objTblProdCarac, $objSession)
 	{
 		$this->objTableProduto = $objTblProd;
+        $this->objTableProdCarac = $objTblProdCarac;
 		$this->objTableCategoria = $objTblCateg;
         $this->objTableProdCateg = $objTblProdCateg;
         $this->objSession = $objSession;
@@ -39,7 +41,9 @@ class IndexController extends AbstractActionController
     	$arrParams = $objRequest->getQuery()->toArray();
     	$intId = !empty($arrParams['id']) ? (int)$arrParams['id'] : 0;
     	$arrProduto = $this->objTableProduto->fetchRow(array('id' => $intId));
-    	$arrParamsView = array('produtos'=>$arrProduto);
+        $arrProdCarac = $this->objTableProdCarac->fetch(array('produto_id' => $intId));
+        //var_dump($arrProdCarac);exit;
+    	$arrParamsView = array('produtos'=>$arrProduto, 'caracteristica'=>$arrProdCarac);
         return new ViewModel($arrParamsView);
     }
 

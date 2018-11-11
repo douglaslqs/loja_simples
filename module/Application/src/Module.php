@@ -12,8 +12,10 @@ use Zend\Db\TableGateway\TableGateway;
 use Application\Model\Entity\ProdutoEntity;
 use Application\Model\Entity\CategoriaEntity;
 use Application\Model\Entity\ProdutoCategoriaEntity;
+use Application\Model\Entity\ProdutoCaracteristicaEntity;
 use Application\Model\ProdutoTable;
 use Application\Model\ProdutoCategoriaTable;
+use Application\Model\ProdutoCaracteristicaTable;
 use Application\Model\CategoriaTable;
 
 class Module
@@ -58,6 +60,16 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new ProdutoCategoriaEntity());
                     return new TableGateway('produto_categoria', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ProdutoCaracteristicaTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ProdutoCaracteristicaTableGateway');
+                    return new ProdutoCaracteristicaTable($tableGateway);
+                },
+                'ProdutoCaracteristicaTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('loja-adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ProdutoCaracteristicaEntity());
+                    return new TableGateway('produto_caracteristica', $dbAdapter, null, $resultSetPrototype);
                 },
     		)
     	);
