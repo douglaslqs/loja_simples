@@ -41,6 +41,7 @@ class IndexController extends AbstractActionController
     	$arrProdutos = $this->objTableProduto->fetch(array(), 10);
     	$arrCategoria = $this->objTableCategoria->fetch();
     	$arrParamsView = array('produtos'=>$arrProdutos, 'categorias'=>$arrCategoria);
+        $this->layout()->setVariable('categorias', $arrCategoria);
         return new ViewModel($arrParamsView);
     }
 
@@ -60,6 +61,7 @@ class IndexController extends AbstractActionController
     {
     	$objRequest = $this->getRequest();
     	$arrParams = $objRequest->getPost()->toArray();
+        $arrParams = empty($arrParams) ? $objRequest->getQuery()->toArray() : $arrParams;
         $arrProdutos = array();
 
         if (isset($arrParams['pesq-nome']) && !empty($arrParams['pesq-nome'])) {

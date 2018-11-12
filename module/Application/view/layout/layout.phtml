@@ -39,6 +39,12 @@
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="<?= $this->url('home') ?>">Home</a></li>
+                        <?php
+                        if (isset($this->categorias)) :
+                            foreach ($this->categorias as $key => $value):?>
+                                <li class="active"><a href="/application/busca?pesq-categoria=<?php echo $value['nome']?>#lk-lista-produtos"><?php echo $value['nome']?></a></li>
+                            <?php endforeach;endif;?>
+
                     </ul>
                 </div>
             </div>
