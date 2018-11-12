@@ -2,12 +2,14 @@
 <div class="row">
     <div class="col-md-12">
         <?php
-        //var_dump($this->produtos);exit;
-        if (!is_array($this->produtos) && !empty($this->produtos)) :
-            echo "<h2>Produto não encontrado :(</h2></div></div>";
+        $total = 0;
+        if (!is_array($this->produtos) || empty($this->produtos)) :
+            echo "<h2>Carrinho vazio :(</h2></div></div>";
          else :
 
-               foreach ($this->produtos as $key => $value) :?>
+               foreach ($this->produtos as $key => $value) :
+                    $total += ($value['preco'] * $value['quantidade']);
+                ?>
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -36,36 +38,152 @@
             </div>
         </div>
     <?php endforeach;?>
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">TOTAL A PAGAR: <h2><b><?php echo "R$ ".number_format($total,2,',','.');?></b></h2></h3>
+                </div>
+            </div>
+        </div>
 
     </div>
-    <div class="jumbotron col-md-12">
+    </div>
+<?php if (!isset($this->dataUser) || empty($this->dataUser)) : ?>
+    <div class="jumbotron col-md-12" id="lk-login">
+        <?php if (isset($this->arrParams['message']) && $this->arrParams['origin'] == 'login'): ?>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <strong><?php echo $this->arrParams['message']; ?></strong><br>
+            <?php foreach ($this->arrParams['error'] as $key => $value) :?>
+                <strong><?php echo strtoupper($key).": "; ?>
+                    <?php foreach ($value as $key => $value) :?>
+                        <?php echo $value;?>
+                <?php endforeach;?>
+                </strong><br>
+            <?php endforeach;?>
+        </div>
+        <?php endif; ?>
         <h3><span class="zf-green">Dados de acesso</span></h3>
         <h4 class="zf-green">
             Login
         </h4>
-        <form action="cadastro" method="post">
+        <form action="login" method="post" name="login" id="form-login">
       <div class="form-group">
-        <?php echo $this->formLabel($this->form->get('email')); ?>
-        <?php echo $this->formElement($this->form->get('email')); ?>
+        <?php echo $this->formLabel($this->formLogin->get('email')); ?>
+        <?php echo $this->formElement($this->formLogin->get('email')); ?>
       </div>
       <div class="form-group">
-        <?php echo $this->formLabel($this->form->get('senha')); ?>
-        <?php echo $this->formElement($this->form->get('senha')); ?>
+        <?php echo $this->formLabel($this->formLogin->get('senha')); ?>
+        <?php echo $this->formElement($this->formLogin->get('senha')); ?>
       </div>
 
         <!-- /.col -->
         <div class="form-group">
-          <?php echo $this->formElement($this->form->get('submit')); ?>
+          <?php echo $this->formElement($this->formLogin->get('submit')); ?>
         </div>
         <!-- /.col -->
 
     </form>
     <br>
-        <h4 class="zf-green">
+        <h4 class="zf-green" id="lk-cadastro">
             Cadastro
         </h4>
+        <?php if (isset($this->arrParams['message']) && $this->arrParams['origin'] == 'cadastro'): ?>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <strong><?php echo $this->arrParams['message']; ?></strong><br>
+            <?php foreach ($this->arrParams['error'] as $key => $value) :?>
+                <strong><?php echo strtoupper($key).": "; ?>
+                    <?php foreach ($value as $key => $value) :?>
+                        <?php echo $value;?>
+                <?php endforeach;?>
+                </strong><br>
+            <?php endforeach;?>
+        </div>
+        <?php endif; ?>
+        <form action="cadastro" method="post" name="cadastro" id="form-cadastro">
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('nome')); ?>
+                <?php echo $this->formElement($this->formSign->get('nome')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('telefone')); ?>
+                <?php echo $this->formElement($this->formSign->get('telefone')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('cep')); ?>
+                <?php echo $this->formElement($this->formSign->get('cep')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('endereco')); ?>
+                <?php echo $this->formElement($this->formSign->get('endereco')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('cidade')); ?>
+                <?php echo $this->formElement($this->formSign->get('cidade')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('estado')); ?>
+                <?php echo $this->formElement($this->formSign->get('estado')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('email')); ?>
+                <?php echo $this->formElement($this->formSign->get('email')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('senha')); ?>
+                <?php echo $this->formElement($this->formSign->get('senha')); ?>
+            </div>
+
+            <!-- /.col -->
+            <div class="form-group">
+                <?php echo $this->formElement($this->formSign->get('submit')); ?>
+            </div>
+            <!-- /.col -->
+
+    </form>
 
 
     </div>
+<?php else: ?>
+        <?php if (isset($this->arrParams['message']) && $this->arrParams['origin'] == 'payment'): ?>
+    <div class="jumbotron col-md-12" id="lk-login">
+        <div class="alert alert-danger" id="lk-payment">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <strong><?php echo $this->arrParams['message']; ?></strong><br>
+            <?php foreach ($this->arrParams['error'] as $key => $value) :?>
+                <strong><?php echo strtoupper($key).": "; ?>
+                    <?php foreach ($value as $key => $value) :?>
+                        <?php echo $value;?>
+                <?php endforeach;?>
+                </strong><br>
+            <?php endforeach;?>
+        </div>
+        <?php endif; ?>
+        <div class="zf-green">
+        EFETUAR PAGAMENTO
+        </div><br>
+        <form action="pagamento" method="post" name="pagamento" id="form-pagamento">
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formPayment->get('numero')); ?>
+                <?php echo $this->formElement($this->formPayment->get('numero')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formPayment->get('cvv')); ?>
+                <?php echo $this->formElement($this->formPayment->get('cvv')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formPayment->get('data')); ?>
+                <?php echo $this->formElement($this->formPayment->get('data')); ?>
+            </div>
+            <!-- /.col -->
+            <div class="form-group">
+                <?php echo $this->formElement($this->formPayment->get('submit')); ?>
+            </div>
+            <!-- /.col -->
+
+    </form>
+<?php endif; ?>
 </div>
 <?php endif; ?>

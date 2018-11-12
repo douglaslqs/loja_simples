@@ -76,10 +76,10 @@ abstract class AbstractTable
 	{
 		try {
 			$resultSet = $this->tableGateway->insert($arrData);
+			return  $this->tableGateway->lastInsertValue;
 		} catch (Exception $e) {
-			$resultSet = $e->getMessage();
+			return $e->getMessage();
 		}
-		return $resultSet;
 	}
 
 	public function update($arrSet, $arrWhere)

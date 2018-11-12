@@ -4,8 +4,8 @@ namespace Application\Model\Entity;
 class ClienteEntity
 {
 	public $email;
-	public $password;
-	public $name;
+	public $senha;
+	public $nome;
 	public $telefone;
 	public $cep;
 	public $endereco;
@@ -15,8 +15,8 @@ class ClienteEntity
 	public function exchangeArray($data)
 	{
 		$this->email    = isset($data['email']) ? $data['email']       : null;
-		$this->password = isset($data['password']) ? $data['password'] : null;
-		$this->name     = isset($data['name']) ? $data['name']         : null;
+		$this->senha = isset($data['senha']) ? $data['senha'] : null;
+		$this->nome     = isset($data['nome']) ? $data['nome']         : null;
 		$this->telefone = isset($data['telefone']) ? $data['telefone'] : null;
 		$this->cep     	= isset($data['cep']) ? $data['cep']           : null;
 		$this->endereco = isset($data['endereco']) ? $data['endereco'] : null;

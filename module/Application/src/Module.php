@@ -14,6 +14,12 @@ use Application\Model\Entity\CategoriaEntity;
 use Application\Model\Entity\ProdutoCategoriaEntity;
 use Application\Model\Entity\ProdutoCaracteristicaEntity;
 use Application\Model\ProdutoTable;
+use Application\Model\PedidoTable;
+use Application\Model\ItemTable;
+use Application\Model\ClienteTable;
+use Application\Model\Entity\ClienteEntity;
+use Application\Model\Entity\ItemEntity;
+use Application\Model\Entity\PedidoEntity;
 use Application\Model\ProdutoCategoriaTable;
 use Application\Model\ProdutoCaracteristicaTable;
 use Application\Model\CategoriaTable;
@@ -70,6 +76,36 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new ProdutoCaracteristicaEntity());
                     return new TableGateway('produto_caracteristica', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ClienteTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ClienteTableGateway');
+                    return new ClienteTable($tableGateway);
+                },
+                'ClienteTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('loja-adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ClienteEntity());
+                    return new TableGateway('cliente', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\PedidoTable' =>  function($sm) {
+                    $tableGateway = $sm->get('PedidoTableGateway');
+                    return new PedidoTable($tableGateway);
+                },
+                'PedidoTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('loja-adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new PedidoEntity());
+                    return new TableGateway('pedido', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\ItemTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ItemTableGateway');
+                    return new ItemTable($tableGateway);
+                },
+                'ItemTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('loja-adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new ItemEntity());
+                    return new TableGateway('item_pedido', $dbAdapter, null, $resultSetPrototype);
                 },
     		)
     	);

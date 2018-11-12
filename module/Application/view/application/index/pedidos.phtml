@@ -1,0 +1,35 @@
+<h2>Pedidos de <?php echo $this->dataUser['nome']?></h2><br>
+<div class="row">
+    <div class="col-md-12">
+        <?php
+
+        if (!is_array($this->pedidos) || !isset($this->pedidos[0]['id'])) :
+            echo "<h2>Nenhum pedido encontrado :(</h2></div></div>";
+         else :
+            foreach ($this->pedidos['itens'] as $k => $itens) :?>
+
+            <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Código Pedido</th>
+                <th>Produto</th>
+                <th>DETALHE</th>
+                <th>Preço unidade</th>
+              </tr>
+            </thead>
+            <tbody>
+           <?php foreach ($itens as $key => $value) :
+                ?>
+              <tr>
+                <td><?php echo $k?></td>
+                <td><?php echo $value['nome']?></td>
+                <td><a href="detalhe?id=<?php echo $value['id'];?>" >VER DETALHE DO ITEM</a></td>
+                <td><?php echo $value['preco']?></td>
+              </tr>
+
+        <?php endforeach;endforeach;?>
+        </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>

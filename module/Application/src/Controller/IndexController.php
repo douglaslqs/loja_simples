@@ -16,15 +16,23 @@ class IndexController extends AbstractActionController
 	private $objTableCategoria;
     private $objTableProdCateg;
     private $objTableProdCarac;
+    private $objTableCliente;
     private $objSession;
     private $objLoginForm;
+    private $objSignForm;
+    private $objPaymentForm;
+    private $objTablePedido;
+    private $objTableItem;
 
-	public function __construct($objTblProd, $objTblCateg, $objTblProdCateg, $objTblProdCarac, $objSession)
+	public function __construct($objTblProd,$objTblCateg,$objTblProdCateg,$objTblProdCarac,$objTblCli,$objTblPed,$objTblItem,$objSession)
 	{
 		$this->objTableProduto = $objTblProd;
         $this->objTableProdCarac = $objTblProdCarac;
 		$this->objTableCategoria = $objTblCateg;
         $this->objTableProdCateg = $objTblProdCateg;
+        $this->objTableCliente = $objTblCli;
+        $this->objTablePedido = $objTblPed;
+        $this->objTableItem = $objTblItem;
         $this->objSession = $objSession;
 	}
 
@@ -74,8 +82,11 @@ class IndexController extends AbstractActionController
 
     public function carrinhoAction()
     {
+        $objRequest = $this->getRequest();
+        $arrParams = $objRequest->getQuery()->toArray();
         $arrProduto = $this->objSession->offsetGet('carrinho');
-        $arrParamsView = array('produtos'=>$arrProduto,'form'=>$this->objLoginForm);
+        $arrDataUser = $this->objSession->offsetGet('dataUser');
+        $arrParamsView = array('produtos'=>$arrProduto,'formLogin'=>$this->objLoginForm,'formSign'=>$this->objSignForm,'formPayment'=>$this->objPaymentForm,'arrParams'=>$arrParams,'dataUser'=>$arrDataUser);
         return new ViewModel($arrParamsView);
     }
 
@@ -125,27 +136,139 @@ class IndexController extends AbstractActionController
         return $this->redirect()->toUrl('carrinho');
     }
 
-    public function cadastroAction()
+    public function loginAction()
     {
-        $arrReturn['status'] = false;
+        $arrReturn['origin'] = 'login';
+        $strAncora = "#lk-login";
         $objRequest = $this->getRequest();
         if ($objRequest->isPost()) {
             $arrParams = $objRequest->getPost()->toArray();
             $this->objLoginForm->setData($arrParams);
             if ($this->objLoginForm->isValid()) {
-                //Salvar dados no banco
+                try {
+                    $arrDataUser = $this->objTableCliente->fetchRow(array('email'=>$arrParams['email']));
+                    if (isset($arrDataUser['senha'])) {
+                        if ($arrDataUser['senha'] === $arrDataUser['senha']) {
+                            $this->objSession->offsetSet('dataUser', $arrDataUser);
+                            $strAncora = '#lk-payment';
+                        } else {
+                            $arrReturn['error'] = array('senha ou e-mail' => array('inválido'));
+                            $arrReturn['message'] = 'Dados não validados!';
+                        }
+                    }
+                } catch (Exception $e) {
+
+                }
+                $this->objSession->offsetSet('dataUser', $arrDataUser);
             } else {
-                $arrReturn['message'] = 'Dados não validados! '.var_dump($this->objLoginForm->getInputFilter()->getMessages(), true);
+                $arrReturn['error'] = $this->objLoginForm->getInputFilter()->getMessages();
+                $arrReturn['message'] = 'Dados não validados!';
             }
         } else {
             $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
         }
-        echo json_encode($arrReturn);exit;
+        return $this->redirect()->toUrl('carrinho?'.http_build_query($arrReturn).$strAncora);
+    }
+
+    public function cadastroAction()
+    {
+        $arrReturn['origin'] = 'cadastro';
+        $strAncora = "#lk-cadastro";
+        $objRequest = $this->getRequest();
+        if ($objRequest->isPost()) {
+            $arrParams = $objRequest->getPost()->toArray();
+            $this->objSignForm->setData($arrParams);
+            if ($this->objSignForm->isValid()) {
+                try {
+                    $objClient = $this->objTableCliente->fetchRow(array('email'=>$arrParams['email']));
+                    if (empty($objClient)) {
+                        unset($arrParams['submit']);
+                        $this->objTableCliente->insert($arrParams);
+                        $this->objSession->offsetSet('dataUser', $arrParams);
+                        $strAncora = '#lk-payment';
+                    } else {
+                        $arrReturn['message'] = 'Dados não validados!';
+                        $arrReturn['error'] = array('email' => array('E-mail já cadastrado! Tente um e-mail diferente'));
+                    }
+                } catch (Exception $e) {
+                    $arrReturn['message'] = 'ERRO AO TENTAR CADASTRAR SUAS INFORMAÇÕES!';
+                    $arrReturn['error'] = array('ERRO: '=> array($e->getMessage()));
+                }
+            } else {
+                $arrReturn['error'] = $this->objSignForm->getInputFilter()->getMessages();
+                $arrReturn['message'] = 'Dados não validados!';
+            }
+        } else {
+            $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
+        }
+        return $this->redirect()->toUrl('carrinho?'.http_build_query($arrReturn).$strAncora);
+    }
+
+    public function pagamentoAction()
+    {
+        $arrReturn['origin'] = 'payment';
+        $objRequest = $this->getRequest();
+        if ($objRequest->isPost()) {
+            $arrParams = $objRequest->getPost()->toArray();
+            $this->objPaymentForm->setData($arrParams);
+            if ($this->objPaymentForm->isValid()) {
+                try {
+                    $arrDataUser = $this->objSession->offsetGet('dataUser');
+                    $intIdPedido = $this->objTablePedido->insert(array('cliente_email'=>$arrDataUser['email']));
+                    foreach ($this->objSession->carrinho as $key => $value) {
+                        $this->objTableItem->insert(array('produto_id'=>$value['id'],'pedido_id'=> $intIdPedido, 'qtd'=>$value['quantidade']));
+                    }
+                    $this->objSession->offsetSet('carrinho', array());
+                    return $this->redirect()->toUrl('pedidos');
+                } catch (Exception $e) {
+                    $arrReturn['message'] = 'ERRO AO TENTAR EFETUAR O PAGAMENTO!';
+                    $arrReturn['error'] = array('ERRO: '=> array($e->getMessage()));
+                }
+            } else {
+                $arrReturn['error'] = $this->objPaymentForm->getInputFilter()->getMessages();
+                $arrReturn['message'] = 'Dados não validados!';
+            }
+        } else {
+            $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
+        }
+        return $this->redirect()->toUrl('carrinho?'.http_build_query($arrReturn)."#lk-payment");
+    }
+
+    public function pedidosAction()
+    {
+        $arrDataUser = $this->objSession->offsetGet('dataUser');
+        $arrPedidos = $this->objTablePedido->fetch(array('cliente_email'=>$arrDataUser['email']));
+
+        if (!empty($arrPedidos)) {
+            $arrItems = array();
+            foreach ($arrPedidos as $key => $value) {
+                $arrItem = $this->objTableItem->fetch(array('pedido_id'=>$value['id']));
+                foreach ($arrItem as $key => $v) {
+                    $arrProduto = $this->objTableProduto->fetchRow(array('id' => $v['produto_id']));
+                    $arrItems[$value['id']][] = $arrProduto;
+                }
+            }
+            $arrPedidos['itens'] = $arrItems;
+        } else {
+            $arrPedidos = array();
+        }
+        $arrParamsView = array('pedidos'=>$arrPedidos,'dataUser'=>$arrDataUser);
+        return new ViewModel($arrParamsView);
     }
 
     public function setFormLogin($objForm)
     {
         $this->objLoginForm = $objForm;
+    }
+
+    public function setFormSign($objForm)
+    {
+        $this->objSignForm = $objForm;
+    }
+
+    public function setFormPayment($objForm)
+    {
+        $this->objPaymentForm = $objForm;
     }
 
 }

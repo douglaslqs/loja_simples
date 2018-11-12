@@ -68,8 +68,8 @@ class LoginForm extends Form
 			        'name' => 'EmailAddress',
 			        'options' =>array(
 			            'messages' => array(
-// 			                'emailAddressInvalid' => 'Email inválido',
-// 			                'emailAddressInvalidHostname' => 'O Host não é válido para o endereço de e-mail'
+	 			                'emailAddressInvalid' => 'Email inválido',
+	 			                'emailAddressInvalidHostname' => 'O Host não é válido para o endereço de e-mail',
 			                 ),
 			             ),
 			    ),
@@ -86,7 +86,7 @@ class LoginForm extends Form
 				array(
 					'name' => 'notEmpty',
 					'options' => array(
-// 						'messages' => array(\Zend\Validator\NotEmpty::IS_EMPTY => 'Informe a senha.'),
+ 						'messages' => array(\Zend\Validator\NotEmpty::IS_EMPTY => 'Não pode ser vazio.'),
 				   ),
 				),
 			),
