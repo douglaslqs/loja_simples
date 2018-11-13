@@ -1,6 +1,15 @@
 <h2>CARRINHO</h2>
 <div class="row">
     <div class="col-md-12">
+        <?php if (isset($this->arrParams['message'])): ?>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <strong>Atenção! </strong>Verifique as informações preenchidas abaixo no formulário de <?php echo $this->arrParams['origin']?>.
+        </div>
+        <?php endif; ?>
+
+
+
         <?php
         $total = 0;
         if (!is_array($this->produtos) || empty($this->produtos)) :
@@ -174,7 +183,7 @@
             <label><input type="radio" value="new" name="endereco-entrega">Trocar endereço de entraga</label>
         </div>
 
-        
+
         <form action="pagamento" method="post" name="pagamento" id="form-pagamento">
         <div id="form-endereco-entrega" style="display: none;">
             <div class="form-group">

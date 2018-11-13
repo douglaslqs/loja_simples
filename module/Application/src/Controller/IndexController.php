@@ -85,10 +85,12 @@ class IndexController extends AbstractActionController
     public function carrinhoAction()
     {
         $objRequest = $this->getRequest();
-        $arrParams = $objRequest->getQuery()->toArray();
+        $objSignForm = !empty($this->params('formSign')) ? $this->params('formSign') : $this->objSignForm;
+        $objLoginForm = !empty($this->params('formLogin')) ? $this->params('formLogin') : $this->objLoginForm;
+        $arrParams = !empty($this->params('arrParams')) ? $this->params('arrParams') : $objRequest->getQuery()->toArray();
         $arrProduto = $this->objSession->offsetGet('carrinho');
         $arrDataUser = $this->objSession->offsetGet('dataUser');
-        $arrParamsView = array('produtos'=>$arrProduto,'formLogin'=>$this->objLoginForm,'formSign'=>$this->objSignForm,'formPayment'=>$this->objPaymentForm,'arrParams'=>$arrParams,'dataUser'=>$arrDataUser);
+        $arrParamsView = array('produtos'=>$arrProduto,'formLogin'=>$objLoginForm,'formSign'=>$objSignForm,'formPayment'=>$this->objPaymentForm,'arrParams'=>$arrParams,'dataUser'=>$arrDataUser);
         return new ViewModel($arrParamsView);
     }
 
@@ -169,7 +171,11 @@ class IndexController extends AbstractActionController
         } else {
             $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
         }
-        return $this->redirect()->toUrl('carrinho?'.http_build_query($arrReturn).$strAncora);
+        return $this->forward()->dispatch('Application\Controller\IndexController', [
+            'action' => 'carrinho',
+            'formLogin' => $this->objLoginForm,
+            'arrParams' => $arrReturn,
+        ]);
     }
 
     public function cadastroAction()
@@ -203,7 +209,11 @@ class IndexController extends AbstractActionController
         } else {
             $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
         }
-        return $this->redirect()->toUrl('carrinho?'.http_build_query($arrReturn).$strAncora);
+        return $this->forward()->dispatch('Application\Controller\IndexController', [
+            'action' => 'carrinho',
+            'formSign' => $this->objSignForm,
+            'arrParams' => $arrReturn,
+        ]);
     }
 
     public function pagamentoAction()
