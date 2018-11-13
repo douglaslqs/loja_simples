@@ -1,12 +1,11 @@
-<h2>Pedidos de <?php echo $this->dataUser['nome']?></h2><br>
+<h2 class="zf-green">Pagamento Aprovado!</h2><br>
 <div class="row">
     <div class="col-md-12">
         <?php
-
         if (!is_array($this->pedidos) || !isset($this->pedidos[0]['id'])) :
             echo "<h2>Nenhum pedido encontrado :(</h2></div></div>";
          else :
-            foreach ($this->pedidos['itens'] as $k => $itens) :?>
+            foreach ($this->pedidos['itens'] as $k => $itens) : ?>
 
             <table class="table table-bordered">
             <thead>
@@ -34,6 +33,8 @@
         <?php endforeach;endforeach;?>
         </tbody>
         </table>
+        <br>
+        <p align="center"><a href="/application/pedidos">VER TODOS OS MEUS PEDIDOS</a></p>
     </div>
 </div>
 <?php endif; ?>

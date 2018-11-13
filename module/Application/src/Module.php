@@ -7,6 +7,7 @@
 
 namespace Application;
 
+use Zend\Mvc\MvcEvent;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\Entity\ProdutoEntity;
@@ -23,10 +24,31 @@ use Application\Model\Entity\PedidoEntity;
 use Application\Model\ProdutoCategoriaTable;
 use Application\Model\ProdutoCaracteristicaTable;
 use Application\Model\CategoriaTable;
+use Zend\Session\SessionManager;
+use Zend\Session\Container;
 
 class Module
 {
     const VERSION = '3.0.3-dev';
+
+    public function onBootstrap(MvcEvent $e)
+    {
+        $application = $e->getApplication();
+        $em = $application->getEventManager();
+        $em->attach(\Zend\Mvc\MvcEvent::EVENT_RENDER, array($this, 'onRender'));
+    }
+
+    public function onRender(MvcEvent $e)
+    {
+        $objTableCategoria = $e->getApplication()->getServiceManager()->get('Application\Model\CategoriaTable');
+        $objSession = $e->getApplication()->getServiceManager()->get('Application\Model\CategoriaTable');
+        $objSessionManager = $e->getApplication()->getServiceManager()->get(SessionManager::class);
+        $objSession = new Container('user', $objSessionManager);
+        $arrCategoria = $objTableCategoria->fetch();
+        $e->getViewModel()->categorias = $arrCategoria;
+        $arrDataUser = $objSession->offsetGet('dataUser');
+        $e->getViewModel()->nome = $arrDataUser['nome'];
+    }
 
     public function getConfig()
     {

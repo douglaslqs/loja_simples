@@ -59,10 +59,10 @@ class SignForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 				    'class' => 'form-control',
-				    'id'    => 'Telefone'
+				    'id'    => 'telefone'
 				),
 				'options' => array(
-						'label' => 'Nome',
+						'label' => 'Telefone',
 				),
 		));
 

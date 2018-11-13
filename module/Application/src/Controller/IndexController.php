@@ -39,9 +39,7 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
     	$arrProdutos = $this->objTableProduto->fetch(array(), 10);
-    	$arrCategoria = $this->objTableCategoria->fetch();
-    	$arrParamsView = array('produtos'=>$arrProdutos, 'categorias'=>$arrCategoria);
-        $this->layout()->setVariable('categorias', $arrCategoria);
+    	$arrParamsView = array('produtos'=>$arrProdutos);
         return new ViewModel($arrParamsView);
     }
 
@@ -221,7 +219,7 @@ class IndexController extends AbstractActionController
                         $this->objTableItem->insert(array('produto_id'=>$value['id'],'pedido_id'=> $intIdPedido, 'qtd'=>$value['quantidade']));
                     }
                     $this->objSession->offsetSet('carrinho', array());
-                    return $this->redirect()->toUrl('pedidos');
+                    return $this->redirect()->toUrl('pedido-confirma?id='.$intIdPedido);
                 } catch (Exception $e) {
                     $arrReturn['message'] = 'ERRO AO TENTAR EFETUAR O PAGAMENTO!';
                     $arrReturn['error'] = array('ERRO: '=> array($e->getMessage()));
@@ -241,12 +239,13 @@ class IndexController extends AbstractActionController
         $arrDataUser = $this->objSession->offsetGet('dataUser');
         $arrPedidos = $this->objTablePedido->fetch(array('cliente_email'=>$arrDataUser['email']));
 
-        if (!empty($arrPedidos)) {
+        if (!empty($arrPedidos) && !empty($arrDataUser['email'])) {
             $arrItems = array();
             foreach ($arrPedidos as $key => $value) {
                 $arrItem = $this->objTableItem->fetch(array('pedido_id'=>$value['id']));
                 foreach ($arrItem as $key => $v) {
                     $arrProduto = $this->objTableProduto->fetchRow(array('id' => $v['produto_id']));
+                    $arrProduto['qtd'] = $v['qtd'];
                     $arrItems[$value['id']][] = $arrProduto;
                 }
             }
@@ -256,6 +255,38 @@ class IndexController extends AbstractActionController
         }
         $arrParamsView = array('pedidos'=>$arrPedidos,'dataUser'=>$arrDataUser);
         return new ViewModel($arrParamsView);
+    }
+
+    public function pedidoConfirmaAction()
+    {
+        $objRequest = $this->getRequest();
+        $arrParams = $objRequest->getQuery()->toArray();
+        $intId = !empty($arrParams['id']) ? (int)$arrParams['id'] : 0;
+
+        $arrDataUser = $this->objSession->offsetGet('dataUser');
+        $arrPedidos = $this->objTablePedido->fetch(array('id'=>$intId));
+        if (!empty($arrPedidos) && !empty($arrDataUser['email'])) {
+            $arrItems = array();
+            foreach ($arrPedidos as $key => $value) {
+                $arrItem = $this->objTableItem->fetch(array('pedido_id'=>$value['id']));
+                foreach ($arrItem as $key => $v) {
+                    $arrProduto = $this->objTableProduto->fetchRow(array('id' => $v['produto_id']));
+                    $arrProduto['qtd'] = $v['qtd'];
+                    $arrItems[$value['id']][] = $arrProduto;
+                }
+            }
+            $arrPedidos['itens'] = $arrItems;
+        } else {
+            $arrPedidos = array();
+        }
+        $arrParamsView = array('pedidos'=>$arrPedidos,'dataUser'=>$arrDataUser);
+        return new ViewModel($arrParamsView);
+    }
+
+    public function sairAction()
+    {
+        $this->objSession->getManager()->getStorage()->clear();
+        $this->redirect()->toUrl('/');
     }
 
     public function setFormLogin($objForm)
