@@ -166,7 +166,35 @@
         <div class="zf-green">
         EFETUAR PAGAMENTO
         </div><br>
+
+        <div class="radio">
+            <label><input type="radio" name="endereco-entrega" value="old" checked>Entregar no meu endereço cadastrado</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" value="new" name="endereco-entrega">Trocar endereço de entraga</label>
+        </div>
+
+        
         <form action="pagamento" method="post" name="pagamento" id="form-pagamento">
+        <div id="form-endereco-entrega" style="display: none;">
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('cep')); ?>
+                <?php echo $this->formElement($this->formSign->get('cep')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('endereco')); ?>
+                <?php echo $this->formElement($this->formSign->get('endereco')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('cidade')); ?>
+                <?php echo $this->formElement($this->formSign->get('cidade')); ?>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel($this->formSign->get('estado')); ?>
+                <?php echo $this->formElement($this->formSign->get('estado')); ?>
+            </div>
+        </div>
+        <hr>
             <div class="form-group">
                 <?php echo $this->formLabel($this->formPayment->get('numero')); ?>
                 <?php echo $this->formElement($this->formPayment->get('numero')); ?>
@@ -189,3 +217,14 @@
 <?php endif; ?>
 </div>
 <?php endif; ?>
+
+<script type="text/javascript">
+    $("input[name='endereco-entrega']").change(function(){
+        if ($(this).val() == 'new') {
+            $("#form-endereco-entrega").removeAttr('style');
+        } else {
+            $("#form-endereco-entrega").attr('style', 'display: none');
+        }
+    });
+
+</script>

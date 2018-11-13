@@ -23,8 +23,9 @@ class IndexController extends AbstractActionController
     private $objPaymentForm;
     private $objTablePedido;
     private $objTableItem;
+    private $objTableEndEnt;
 
-	public function __construct($objTblProd,$objTblCateg,$objTblProdCateg,$objTblProdCarac,$objTblCli,$objTblPed,$objTblItem,$objSession)
+	public function __construct($objTblProd,$objTblCateg,$objTblProdCateg,$objTblProdCarac,$objTblCli,$objTblPed,$objTblItem,$objTblEndEnt,$objSession)
 	{
 		$this->objTableProduto = $objTblProd;
         $this->objTableProdCarac = $objTblProdCarac;
@@ -33,6 +34,7 @@ class IndexController extends AbstractActionController
         $this->objTableCliente = $objTblCli;
         $this->objTablePedido = $objTblPed;
         $this->objTableItem = $objTblItem;
+        $this->objTableEndEnt = $objTblEndEnt;
         $this->objSession = $objSession;
 	}
 
@@ -218,6 +220,15 @@ class IndexController extends AbstractActionController
                     foreach ($this->objSession->carrinho as $key => $value) {
                         $this->objTableItem->insert(array('produto_id'=>$value['id'],'pedido_id'=> $intIdPedido, 'qtd'=>$value['quantidade']));
                     }
+                    if (isset($arrParams['cep'])) {
+                        $arrInsert['cep'] = $arrParams['cep'];
+                        $arrInsert['endereco'] = $arrParams['endereco'];
+                        $arrInsert['cidade'] = $arrParams['cidade'];
+                        $arrInsert['estado'] = $arrParams['estado'];
+                        $arrInsert['cliente_email'] = $arrDataUser['email'];
+                        $arrInsert['pedido_id'] = $intIdPedido;
+                        $this->objTableEndEnt->insert($arrInsert);
+                    }
                     $this->objSession->offsetSet('carrinho', array());
                     return $this->redirect()->toUrl('pedido-confirma?id='.$intIdPedido);
                 } catch (Exception $e) {
@@ -243,6 +254,7 @@ class IndexController extends AbstractActionController
             $arrItems = array();
             foreach ($arrPedidos as $key => $value) {
                 $arrItem = $this->objTableItem->fetch(array('pedido_id'=>$value['id']));
+                $arrEndEnt = $this->objTableEndEnt->fetch(array('pedido_id'=>$value['id']));
                 foreach ($arrItem as $key => $v) {
                     $arrProduto = $this->objTableProduto->fetchRow(array('id' => $v['produto_id']));
                     $arrProduto['qtd'] = $v['qtd'];
@@ -250,6 +262,7 @@ class IndexController extends AbstractActionController
                 }
             }
             $arrPedidos['itens'] = $arrItems;
+            $arrPedidos['endereco_entrega'][$value['id']] = $arrEndEnt;
         } else {
             $arrPedidos = array();
         }
@@ -269,6 +282,7 @@ class IndexController extends AbstractActionController
             $arrItems = array();
             foreach ($arrPedidos as $key => $value) {
                 $arrItem = $this->objTableItem->fetch(array('pedido_id'=>$value['id']));
+                $arrEndEnt = $this->objTableEndEnt->fetch(array('pedido_id'=>$value['id']));
                 foreach ($arrItem as $key => $v) {
                     $arrProduto = $this->objTableProduto->fetchRow(array('id' => $v['produto_id']));
                     $arrProduto['qtd'] = $v['qtd'];
@@ -276,6 +290,7 @@ class IndexController extends AbstractActionController
                 }
             }
             $arrPedidos['itens'] = $arrItems;
+            $arrPedidos['endereco_entrega'][$intId] = $arrEndEnt;
         } else {
             $arrPedidos = array();
         }

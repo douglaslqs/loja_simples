@@ -19,11 +19,13 @@ use Application\Model\PedidoTable;
 use Application\Model\ItemTable;
 use Application\Model\ClienteTable;
 use Application\Model\Entity\ClienteEntity;
+use Application\Model\Entity\EnderecoEntregaEntity;
 use Application\Model\Entity\ItemEntity;
 use Application\Model\Entity\PedidoEntity;
 use Application\Model\ProdutoCategoriaTable;
 use Application\Model\ProdutoCaracteristicaTable;
 use Application\Model\CategoriaTable;
+use Application\Model\EnderecoEntregaTable;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
 
@@ -128,6 +130,16 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new ItemEntity());
                     return new TableGateway('item_pedido', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\EnderecoEntregaTable' =>  function($sm) {
+                    $tableGateway = $sm->get('EnderecoEntregaTableGateway');
+                    return new EnderecoEntregaTable($tableGateway);
+                },
+                'EnderecoEntregaTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('loja-adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new EnderecoEntregaEntity());
+                    return new TableGateway('endereco_entrega', $dbAdapter, null, $resultSetPrototype);
                 },
     		)
     	);
