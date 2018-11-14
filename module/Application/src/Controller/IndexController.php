@@ -87,10 +87,12 @@ class IndexController extends AbstractActionController
         $objRequest = $this->getRequest();
         $objSignForm = !empty($this->params('formSign')) ? $this->params('formSign') : $this->objSignForm;
         $objLoginForm = !empty($this->params('formLogin')) ? $this->params('formLogin') : $this->objLoginForm;
+        $objPaymentForm = !empty($this->params('formPayment')) ? $this->params('formPayment') : $this->objPaymentForm;
         $arrParams = !empty($this->params('arrParams')) ? $this->params('arrParams') : $objRequest->getQuery()->toArray();
         $arrProduto = $this->objSession->offsetGet('carrinho');
         $arrDataUser = $this->objSession->offsetGet('dataUser');
-        $arrParamsView = array('produtos'=>$arrProduto,'formLogin'=>$objLoginForm,'formSign'=>$objSignForm,'formPayment'=>$this->objPaymentForm,'arrParams'=>$arrParams,'dataUser'=>$arrDataUser);
+        $arrParamsView = array('produtos'=>$arrProduto,'formLogin'=>$objLoginForm,'formSign'=>$objSignForm,'formPayment'=>$objPaymentForm,'arrParams'=>$arrParams,'dataUser'=>$arrDataUser);
+
         return new ViewModel($arrParamsView);
     }
 
@@ -114,8 +116,6 @@ class IndexController extends AbstractActionController
             $arrSessCarrinho[$arrProduto['id']]['quantidade'] = 1;
         }
         $this->objSession->offsetSet('carrinho', $arrSessCarrinho);
-       // var_dump($this->objSession->offsetGet('carrinho'));exit;
-
         return $this->redirect()->toUrl('carrinho');
     }
 
@@ -143,7 +143,6 @@ class IndexController extends AbstractActionController
     public function loginAction()
     {
         $arrReturn['origin'] = 'login';
-        $strAncora = "#lk-login";
         $objRequest = $this->getRequest();
         if ($objRequest->isPost()) {
             $arrParams = $objRequest->getPost()->toArray();
@@ -154,11 +153,13 @@ class IndexController extends AbstractActionController
                     if (isset($arrDataUser['senha'])) {
                         if ($arrDataUser['senha'] === $arrDataUser['senha']) {
                             $this->objSession->offsetSet('dataUser', $arrDataUser);
-                            $strAncora = '#lk-payment';
                         } else {
                             $arrReturn['error'] = array('senha ou e-mail' => array('inválido'));
                             $arrReturn['message'] = 'Dados não validados!';
                         }
+                    } else {
+                        $arrReturn['error'] = array('email' => array('Não encontrado'));
+                        $arrReturn['message'] = 'Usuário não encontrado!';
                     }
                 } catch (Exception $e) {
 
@@ -181,7 +182,6 @@ class IndexController extends AbstractActionController
     public function cadastroAction()
     {
         $arrReturn['origin'] = 'cadastro';
-        $strAncora = "#lk-cadastro";
         $objRequest = $this->getRequest();
         if ($objRequest->isPost()) {
             $arrParams = $objRequest->getPost()->toArray();
@@ -193,7 +193,6 @@ class IndexController extends AbstractActionController
                         unset($arrParams['submit']);
                         $this->objTableCliente->insert($arrParams);
                         $this->objSession->offsetSet('dataUser', $arrParams);
-                        $strAncora = '#lk-payment';
                     } else {
                         $arrReturn['message'] = 'Dados não validados!';
                         $arrReturn['error'] = array('email' => array('E-mail já cadastrado! Tente um e-mail diferente'));
@@ -230,7 +229,7 @@ class IndexController extends AbstractActionController
                     foreach ($this->objSession->carrinho as $key => $value) {
                         $this->objTableItem->insert(array('produto_id'=>$value['id'],'pedido_id'=> $intIdPedido, 'qtd'=>$value['quantidade']));
                     }
-                    if (isset($arrParams['cep'])) {
+                    if (isset($arrParams['cep']) && !empty($arrParams['cep'])) {
                         $arrInsert['cep'] = $arrParams['cep'];
                         $arrInsert['endereco'] = $arrParams['endereco'];
                         $arrInsert['cidade'] = $arrParams['cidade'];
@@ -252,7 +251,11 @@ class IndexController extends AbstractActionController
         } else {
             $arrReturn['message'] = 'Metodo de envio inesperádo! Esperando POST';
         }
-        return $this->redirect()->toUrl('carrinho?'.http_build_query($arrReturn)."#lk-payment");
+        return $this->forward()->dispatch('Application\Controller\IndexController', [
+            'action' => 'carrinho',
+            'formPayment' => $this->objPaymentForm,
+            'arrParams' => $arrReturn,
+        ]);
     }
 
     public function pedidosAction()

@@ -49,7 +49,7 @@ class Module
         $arrCategoria = $objTableCategoria->fetch();
         $e->getViewModel()->categorias = $arrCategoria;
         $arrDataUser = $objSession->offsetGet('dataUser');
-        $e->getViewModel()->nome = $arrDataUser['nome'];
+        $e->getViewModel()->nome = isset($arrDataUser['nome']) ? $arrDataUser['nome'] : null;
     }
 
     public function getConfig()

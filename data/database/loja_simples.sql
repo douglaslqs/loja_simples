@@ -91,7 +91,6 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES ('atual@gmail.com','karen1504','Karen Rapini','11985468579','0265585','rua kdaksdad','itapevi','SP'),('dev1@mediaw.com.br','132432434','Douglas','1156451564','05315154','endereco','itapevi','SC'),('dev2@mediaw.com.br','123','Douglas','1156451564','05315154','endereco','itapevi','SC');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,18 +102,19 @@ DROP TABLE IF EXISTS `endereco_entrega`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `endereco_entrega` (
-  `endereco` varchar(45) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `cliente_email` varchar(128) NOT NULL,
+  `endereco` varchar(45) NOT NULL,
   `cidade` varchar(45) DEFAULT NULL,
   `estado` varchar(45) DEFAULT NULL,
   `cep` varchar(45) DEFAULT NULL,
   `pedido_id` int(11) NOT NULL,
-  PRIMARY KEY (`endereco`),
+  PRIMARY KEY (`id`),
   KEY `fk_endereco_entrega_cliente1_idx` (`cliente_email`),
   KEY `fk_endereco_entrega_pedido1_idx` (`pedido_id`),
   CONSTRAINT `fk_endereco_entrega_cliente1` FOREIGN KEY (`cliente_email`) REFERENCES `cliente` (`email`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_endereco_entrega_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +123,6 @@ CREATE TABLE `endereco_entrega` (
 
 LOCK TABLES `endereco_entrega` WRITE;
 /*!40000 ALTER TABLE `endereco_entrega` DISABLE KEYS */;
-INSERT INTO `endereco_entrega` VALUES ('','dev1@mediaw.com.br','','','',41),('teste','dev1@mediaw.com.br','teste','BA','0545405045',40);
 /*!40000 ALTER TABLE `endereco_entrega` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,7 +151,6 @@ CREATE TABLE `item_pedido` (
 
 LOCK TABLES `item_pedido` WRITE;
 /*!40000 ALTER TABLE `item_pedido` DISABLE KEYS */;
-INSERT INTO `item_pedido` VALUES (1,23,3),(1,27,2),(1,31,1),(1,32,1),(1,33,1),(1,34,1),(1,35,1),(1,36,1),(1,37,1),(1,38,1),(1,39,1),(1,40,1),(2,23,1),(2,24,1),(2,28,1),(2,41,1),(3,26,1),(3,30,2),(5,27,1),(6,25,2),(6,26,2),(6,29,1);
 /*!40000 ALTER TABLE `item_pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,7 +167,7 @@ CREATE TABLE `pedido` (
   PRIMARY KEY (`id`),
   KEY `fk_pedido_cliente1_idx` (`cliente_email`),
   CONSTRAINT `fk_pedido_cliente1` FOREIGN KEY (`cliente_email`) REFERENCES `cliente` (`email`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +176,6 @@ CREATE TABLE `pedido` (
 
 LOCK TABLES `pedido` WRITE;
 /*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
-INSERT INTO `pedido` VALUES (25,'atual@gmail.com'),(26,'atual@gmail.com'),(27,'atual@gmail.com'),(30,'atual@gmail.com'),(23,'dev1@mediaw.com.br'),(24,'dev1@mediaw.com.br'),(28,'dev1@mediaw.com.br'),(29,'dev1@mediaw.com.br'),(31,'dev1@mediaw.com.br'),(32,'dev1@mediaw.com.br'),(33,'dev1@mediaw.com.br'),(34,'dev1@mediaw.com.br'),(35,'dev1@mediaw.com.br'),(36,'dev1@mediaw.com.br'),(37,'dev1@mediaw.com.br'),(38,'dev1@mediaw.com.br'),(39,'dev1@mediaw.com.br'),(40,'dev1@mediaw.com.br'),(41,'dev1@mediaw.com.br');
 /*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,6 +263,10 @@ LOCK TABLES `produto_categoria` WRITE;
 INSERT INTO `produto_categoria` VALUES (1,'Cozinha'),(2,'Quarto'),(3,'Cozinha'),(3,'Jardim'),(4,'Sala'),(5,'Quarto'),(6,'Banheiro'),(6,'Quarto'),(6,'Sala');
 /*!40000 ALTER TABLE `produto_categoria` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'db_loja_simples'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -276,4 +277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-13  3:28:06
+-- Dump completed on 2018-11-14  9:08:35

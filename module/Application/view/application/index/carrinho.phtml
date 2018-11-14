@@ -180,7 +180,7 @@
             <label><input type="radio" name="endereco-entrega" value="old" checked>Entregar no meu endereço cadastrado</label>
         </div>
         <div class="radio">
-            <label><input type="radio" value="new" name="endereco-entrega">Trocar endereço de entraga</label>
+            <label><input type="radio" value="new" name="endereco-entrega">Trocar endereço de entrega</label>
         </div>
 
 
@@ -226,8 +226,13 @@
 <?php endif; ?>
 </div>
 <?php endif; ?>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
 <script type="text/javascript">
+    $("#telefone").mask("(00) 0000-0000");
+    $("#cep").mask("00000-000");
+    $("#txt-numero").mask("0000 0000 0000 0000");
+    $("#txt-cvv").mask("000");
+    $("#txt-data").mask("00/00/0000");
     $("input[name='endereco-entrega']").change(function(){
         if ($(this).val() == 'new') {
             $("#form-endereco-entrega").removeAttr('style');

@@ -21,7 +21,7 @@ class PaymentForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 						'class' => 'form-control',
-						'id' => 'txt-nome'
+						'id' => 'txt-numero'
 				),
 				'options' => array(
 						'label' => 'Número do cartão',
@@ -33,7 +33,7 @@ class PaymentForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 						'class' => 'form-control',
-						'id' => 'txt-nome'
+						'id' => 'txt-cvv'
 				),
 				'options' => array(
 						'label' => 'Código de segurança',
@@ -45,7 +45,8 @@ class PaymentForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 						'class' => 'form-control',
-						'id' => 'txt-nome'
+						'id' => 'txt-data',
+						'placeholder' => 'dd/mm/yyyy'
 				),
 				'options' => array(
 						'label' => 'Data de Vencimento',

@@ -23,7 +23,8 @@ class SignForm extends Form
 					'type' => 'Zend\Form\Element\Email',
 					'attributes' => array(
 						'class' => 'form-control',
-					    'id'    => 'email'
+					    'id'    => 'email',
+					    'placeholder' => 'Ex.: email@dominio.com.br'
 					),
 					'options' => array(
 						'label' => 'E-mail',
@@ -71,7 +72,7 @@ class SignForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 				    'class' => 'form-control',
-				    'id'    => 'Cep'
+				    'id'    => 'cep'
 				),
 				'options' => array(
 						'label' => 'Cep',
@@ -83,7 +84,8 @@ class SignForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 				    'class' => 'form-control',
-				    'id'    => 'Endereço'
+				    'id'    => 'endereco',
+				    'placeholder' => 'Ex.: Rua Exemplo, 10'
 				),
 				'options' => array(
 						'label' => 'Endereço',
@@ -95,7 +97,8 @@ class SignForm extends Form
 				'type' => 'Zend\Form\Element\Text',
 				'attributes' => array(
 				    'class' => 'form-control',
-				    'id'    => 'cidade'
+				    'id'    => 'cidade',
+				    'placeholder' => 'Nome da sua cidade'
 				),
 				'options' => array(
 						'label' => 'Cidade',
@@ -107,7 +110,7 @@ class SignForm extends Form
 				'type' => 'Zend\Form\Element\Select',
 				'attributes' => array(
 					'class' => 'form-control',
-					'id' => 'estado'
+					'id' => 'estado',
 				),
 				'options' => array(
 					'label' => 'Estado',

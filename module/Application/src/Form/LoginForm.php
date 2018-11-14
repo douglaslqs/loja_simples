@@ -23,7 +23,8 @@ class LoginForm extends Form
 					'type' => 'Zend\Form\Element\Email',
 					'attributes' => array(
 						'class' => 'form-control',
-					    'id'    => 'email'
+					    'id'    => 'email',
+					    'placeholder' => 'Ex.: email@dominio.com.br'
 					),
 					'options' => array(
 						'label' => 'E-mail',
